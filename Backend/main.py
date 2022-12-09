@@ -1,9 +1,20 @@
 from fastapi import FastAPI
 
 from controller import PIDController
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+origins = [
+    "*"
+]
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 async def root():
@@ -15,7 +26,7 @@ async def say_hello(name: str):
     return {"message": f"Hello {name}"}
 
 
-@app.get("/controller")
+@app.options("/controller")
 async def controller(simulationTime: int, startingTemperature: float, desiredTemperature: float, Kp: float, Ki: float, Kd: float,
                      maxHvacOutput: float):
     cnt = PIDController(
