@@ -580,3 +580,4 @@ $RECYCLE.BIN/
 
 # End of https://www.toptal.com/developers/gitignore/api/pycharm,react,webstorm,visualstudiocode,linux,windows,node,python,venv
 pnpm-lock.yaml
+.idea/
