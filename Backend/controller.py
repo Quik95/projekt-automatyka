@@ -8,15 +8,21 @@ class RoomModel:
     # mass of the air in the room
     mass: float
     dt: float
+    outside_temperature = 41
+    U_value: float = 0.53
 
-    def __init__(self, starting_temperature: float, dt: float, room_size: int, ceiling_height: int):
+    def __init__(self, starting_temperature: float, dt: float, room_dimensions: tuple[int, int, int]):
+        (length, width, height) = room_dimensions
+
         self.dt = dt
         self.temperature = starting_temperature
-        self.volume = room_size * ceiling_height
+        self.volume = length * width * height
+        self.surface_area = height*width*2 + height*length*2
         self.mass = self.volume * self.air_density
 
     def update(self, control_signal: float):
-        dT = (control_signal / (self.volume * self.heat_capacity)) * self.dt
+        heat_loss = (self.U_value * self.surface_area * (self.temperature - self.outside_temperature))/3600
+        dT = ((control_signal / (self.mass * self.heat_capacity)) - heat_loss) * self.dt
         self.temperature += dT
 
 
@@ -31,16 +37,16 @@ class PIDController:
     max_hvac_output: float = 5000 / 3600  # BTUs per second
 
     # time interval for updates in seconds
-    dt: int = 5
+    dt: int = 60
 
     # constructor for this class
-    def __init__(self, simulation_time: int, starting_temperature: float, desired_temperature: float, Kp: float = 1.0,
-                 Ki: float = 0.5, Kd: float = 0.01, max_hvac_output: float = 5000):
+    def __init__(self, simulation_time: int, starting_temperature: float, desired_temperature: float, Kp: float,
+                 Ki: float, Kd: float, max_hvac_output: float):
         self.Kp = Kp
         self.Ki = Ki
         self.Kd = Kd
         self.simulation_time = 60 * simulation_time  # half an hour
-        self.room_model = RoomModel(self.celcius_to_fahrenheit(starting_temperature), self.dt / 3600, 100, 8)
+        self.room_model = RoomModel(self.celcius_to_fahrenheit(starting_temperature), self.dt / 3600, (25, 15, 8))
         self.max_hvac_output = max_hvac_output  # BTUs per hour
 
         self.desired_temperature = self.celcius_to_fahrenheit(desired_temperature)
@@ -64,7 +70,7 @@ class PIDController:
 
         while elapsed_time <= self.simulation_time:
             # calculate error
-            error = self.desired_temperature - self.room_model.temperature
+            error = (self.desired_temperature - self.room_model.temperature)*self.dt
 
             # Update the integral term
             integral += self.Ki * error * self.dt
@@ -72,7 +78,7 @@ class PIDController:
             derivative = self.Kd * (error - last_error) / self.dt
 
             # Calculate the output of PI controller
-            output = min(max(self.Kp * error + integral + derivative, 0), self.max_hvac_output)
+            output = (min(max(self.Kp * error + integral + derivative, 0), self.max_hvac_output) // 100) * 100
             # output = self.Kp * error + integral + derivative
 
             self.room_model.update(output)

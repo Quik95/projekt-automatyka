@@ -20,6 +20,7 @@ function Selector(props) {
                         aria-labelledby="input-slider"
                         min={minValue}
                         max={maxValue}
+                        //  What are you doing step value???
                         step={valueStep}
                     />
                 </Grid>
