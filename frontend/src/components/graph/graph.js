@@ -11,7 +11,8 @@ async function getData(setData, parameters) {
                 "Access-Control-Allow-Methods": "GET,POST,PATCH,OPTIONS",
             };
             const {simulationTime, maxHVACOutput, startingTemperature, desiredTemperature, Kp, Ki, Kd} = parameters;
-            const data = await fetch(
+            try {
+             const data = await fetch(
                 "http://localhost:8000/controller?" +
                 new URLSearchParams({
                     simulationTime: simulationTime,
@@ -23,11 +24,14 @@ async function getData(setData, parameters) {
                     maxHvacOutput: maxHVACOutput,
                 }),
                 {headers: headers, method: "OPTIONS"}
-            ).then((response) => {
-                return response.json();
-            });
-            setData(data);
-            console.count("Number of times getData was called");
+            )
+                if (data.status == 200){
+                    setData(await data.json());
+                }
+                console.count("Number of times getData was called");
+            } catch(e) {
+                console.error(e)
+            }
         }
 
 export default function Graph() {
@@ -53,10 +57,16 @@ export default function Graph() {
                     data={[
                         {
                             x: [...data.times.map(t => t / 60)],
-                            y: [...data.temps],
+                            y: data.temps,
                             type: "scatter",
                             mode: "lines",
                         },
+                        {
+                            x: data.times.map(t => t / 60),
+                            y: data.hvac,
+                            type: "scatte",
+                            mode: "lines"
+                        }
                     ]}
                 ></Plot>
                 <Fields
