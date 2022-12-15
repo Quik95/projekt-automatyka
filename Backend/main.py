@@ -26,7 +26,7 @@ async def say_hello(name: str):
     return {"message": f"Hello {name}"}
 
 
-@app.options("/controller")
+@app.get("/controller")
 async def controller(simulationTime: int, startingTemperature: float, desiredTemperature: float, Kp: float, Ki: float, Kd: float,
                      maxHvacOutput: float):
     cnt = PIDController(

@@ -23,7 +23,7 @@ async function getData(setData, parameters) {
                     Kd: parseFloat(Kd),
                     maxHvacOutput: maxHVACOutput,
                 }),
-                {headers: headers, method: "OPTIONS"}
+                {headers: headers}
             )
                 if (data.status === 200){
                     setData(await data.json());
