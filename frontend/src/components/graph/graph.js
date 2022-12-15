@@ -67,12 +67,21 @@ export default function Graph() {
                             y: data.temps,
                             type: "scatter",
                             mode: "lines",
+                            name: "Current temperature"
                         },
                         {
                             x: data.times.map(t => t / 60),
                             y: data.hvac,
-                            type: "scatte",
-                            mode: "lines"
+                            type: "scatter",
+                            mode: "lines",
+                            name: "HVAC output"
+                        },
+                        {
+                            x: data.times.map(t => t / 60),
+                            y: data.times.map(_ => parameters.desiredTemperature),
+                            type: "scatter",
+                            mode: "lines",
+                            name: "Desired temperature",
                         }
                     ]}
                 ></Plot>
