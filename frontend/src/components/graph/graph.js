@@ -25,7 +25,7 @@ async function getData(setData, parameters) {
                 }),
                 {headers: headers, method: "OPTIONS"}
             )
-                if (data.status == 200){
+                if (data.status === 200){
                     setData(await data.json());
                 }
                 console.count("Number of times getData was called");
@@ -37,13 +37,13 @@ async function getData(setData, parameters) {
 export default function Graph() {
     const [data, setData] = useState({graphData: []});
     const [parameters, setParameters] = useState({
-        simulationTime: 0,
-        maxHVACOutput: 0,
-        startingTemperature: 0,
-        desiredTemperature: 0,
-        Kp: 0,
+        simulationTime: 60,
+        maxHVACOutput: 1000,
+        startingTemperature: 18,
+        desiredTemperature: 21,
+        Kp: 60,
         Ki: 0,
-        Kd: 0
+        Kd: 0.05
     });
     const debounceQuery = useMemo(() => debounce(() => getData(setData, parameters), 50), [parameters])
 

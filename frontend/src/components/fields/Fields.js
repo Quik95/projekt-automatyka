@@ -12,7 +12,7 @@ function Selector(props) {
                 { title }
             </Typography>
             <Grid container spacing={2} alignItems="center">
-                <Grid item xs={9}>
+                <Grid item xs={8}>
                     <Slider
                         name={name}
                         value={value}
@@ -24,7 +24,7 @@ function Selector(props) {
                         step={valueStep}
                     />
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item xs={4}>
                     <Input
                         value={value}
                         name={name}
