@@ -11,7 +11,7 @@ export default function Graph() {
         maxHVACOutput: 1000,
         startingTemperature: 18,
         desiredTemperature: 21,
-        Kp: 60,
+        Kp: 23,
         Ki: 0,
         Kd: 0.05
     });
