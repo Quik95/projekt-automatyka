@@ -1,18 +1,17 @@
-import React, {useState} from "react";
+import React from "react";
 import Slider from "@mui/material/Slider";
-import styles from "./Fields.css";
-import {Box, Grid, Input, Select, Typography} from "@mui/material";
+import {Box, Grid, Input, InputAdornment, Typography} from "@mui/material";
 
 function Selector(props) {
-    const {value, handleValueChange, title, name, minValue, maxValue, valueStep} = props;
+    const {value, handleValueChange, title, name, minValue, maxValue, valueStep, unit} = props;
 
     return (
         <Box sx={{width: 250}}>
             <Typography id="input-slider" gutterBottom>
-                { title }
+                {title}
             </Typography>
             <Grid container spacing={2} alignItems="center">
-                <Grid item xs={8}>
+                <Grid item xs={7}>
                     <Slider
                         name={name}
                         value={value}
@@ -24,19 +23,11 @@ function Selector(props) {
                         step={valueStep}
                     />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={5}>
                     <Input
                         value={value}
                         name={name}
-                        size="small"
-                        onChange={handleValueChange}
-                        inputProps={{
-                            step: props.step,
-                            type: 'number',
-                            'aria-labelledby': 'input-slider',
-                            max: maxValue,
-                            min: minValue
-                        }}
+                        endAdornment={<InputAdornment position="end">{unit}</InputAdornment>}
                     />
                 </Grid>
             </Grid>
@@ -45,11 +36,10 @@ function Selector(props) {
 }
 
 export default function Fields(props) {
-    const {parameters: {simulationTime, maxHVACOutput, startingTemperature, desiredTemperature, Kp, Ki, Kd}, handleChangeParameters} = props;
-
-    const marks = [...Array(150)].map((_, i) =>
-        {return {value: i, label: i.toString()}}
-    );
+    const {
+        parameters: {simulationTime, maxHVACOutput, startingTemperature, desiredTemperature, Kp, Ki, Kd},
+        handleChangeParameters
+    } = props;
 
     const handleValueChange = e => {
         const {target: {name, value}} = e;
@@ -90,6 +80,7 @@ export default function Fields(props) {
                 minValue={0}
                 maxValue={180}
                 valueStep={1}
+                unit="min"
             />
             <Selector
                 title="Maksymalna moc grzewcza"
@@ -99,6 +90,7 @@ export default function Fields(props) {
                 minValue={500}
                 maxValue={10_000}
                 valueStep={250}
+                unit="BTU"
             />
             <Selector
                 title="Temperatura początkowa"
@@ -108,6 +100,7 @@ export default function Fields(props) {
                 minValue={0}
                 maxValue={38}
                 valueStep={1}
+                unit="°C"
             />
             <Selector
                 title="Temperatura docelowa"
@@ -117,6 +110,7 @@ export default function Fields(props) {
                 minValue={0}
                 maxValue={38}
                 valueStep={1}
+                unit="°C"
             />
             <Selector
                 title="Kp"

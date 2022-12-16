@@ -42,7 +42,7 @@ export default function Graph() {
                 )
                 if (didCancel)
                     console.count("Cancelled request")
-                if (data.status === 200 && didCancel === false) {
+                else if (data.status === 200) {
                     setData(await data.json());
                     console.count("Number of times getData was called");
                 }
@@ -60,9 +60,9 @@ export default function Graph() {
 
     if (data.times)
         return (
-            <Grid container paddingX={"10px"} spacing={6} justifyContent="center" alignItems="center">
+            <Grid container paddingY={"60px"} spacing={6} justifyContent="center" alignItems="center">
                 <Grid item xs={10}>
-                    <Grid container spacing={6} justiftContent="center">
+                    <Grid container spacing={6} justifyContent="center">
                         <Grid item>
                             <Plot
                                 layout={{title: "Wykres temperatury w zależności od czasu"}}
