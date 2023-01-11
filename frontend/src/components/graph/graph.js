@@ -11,9 +11,9 @@ export default function Graph() {
         maxHVACOutput: 1000,
         startingTemperature: 18,
         desiredTemperature: 21,
-        Kp: 23,
-        Ki: 0,
-        Kd: 0.05
+        Kp: 400,
+        Ki: 0.04,
+        Kd: 0.00
     });
 
     useEffect(() => {
@@ -69,7 +69,7 @@ export default function Graph() {
                                 data={[
                                     {
                                         x: [...data.times.map(t => t / 60)],
-                                        y: data.temps,
+                                        y: data.temps.map(t => Math.round((t + Number.EPSILON) * 100) / 100),
                                         type: "scatter",
                                         mode: "lines",
                                         name: "Current temperature"

@@ -27,6 +27,7 @@ function Selector(props) {
                     <Input
                         value={value}
                         name={name}
+                        onChange={handleValueChange}
                         endAdornment={<InputAdornment position="end">{unit}</InputAdornment>}
                     />
                 </Grid>
