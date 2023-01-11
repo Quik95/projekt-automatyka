@@ -32,6 +32,7 @@ class PIDController:
     Ki: float
     Kd: float
     simulation_time: float
+    wiggle_room: float
     room_model: RoomModel
     # Define the HVAC output in BTUs per hour
     max_hvac_output: float = 5000 / 3600  # BTUs per second
@@ -50,6 +51,7 @@ class PIDController:
         self.max_hvac_output = max_hvac_output  # BTUs per hour
 
         self.desired_temperature = self.celcius_to_fahrenheit(desired_temperature)
+        self.wiggle_room = 1.11
 
     @staticmethod
     def fahrenheit_to_celsius(fahrenheit: float) -> float:
@@ -66,24 +68,37 @@ class PIDController:
         measurement_times = []
         temperatures = []
         hvac_outputs = []
-        last_error = 0
+
+        previous_error = 0
+        integral = 0
+        cooling = 0
 
         while elapsed_time <= self.simulation_time:
             # calculate error
-            error = (self.desired_temperature - self.room_model.temperature)*self.dt
+            error = self.desired_temperature - self.room_model.temperature
+
+            proportional = error
 
             # Update the integral term
-            integral += self.Ki * error * self.dt
+            integral = integral + error * self.dt
 
-            derivative = self.Kd * (error - last_error) / self.dt
+            derivative = (error - previous_error) / self.dt
 
             # Calculate the output of PI controller
-            output = (min(max(self.Kp * error + integral + derivative, 0), self.max_hvac_output) // 100) * 100
-            # output = self.Kp * error + integral + derivative
+            output = self.Kp * proportional + self.Ki * integral + self.Kd * derivative
+            output = output // 200 * 200
+            output = min(max(output, 0), self.max_hvac_output)
+            if output == 0:
+                cooling = 10
+
+            if cooling > 0:
+                output = 0
+                cooling -= 1
 
             self.room_model.update(output)
             elapsed_time += self.dt
-            last_error = error
+
+            previous_error = error
 
             measurement_times.append(elapsed_time)
             temperatures.append(self.fahrenheit_to_celsius(self.room_model.temperature))
