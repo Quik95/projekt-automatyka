@@ -86,14 +86,14 @@ class PIDController:
 
             # Calculate the output of PI controller
             output = self.Kp * proportional + self.Ki * integral + self.Kd * derivative
-            output = output // 200 * 200
+            # output = output // 200 * 200
             output = min(max(output, 0), self.max_hvac_output)
-            if output == 0:
-                cooling = 10
-
-            if cooling > 0:
-                output = 0
-                cooling -= 1
+            # if output == 0:
+            #     cooling = 10
+            #
+            # if cooling > 0:
+            #     output = 0
+            #     cooling -= 1
 
             self.room_model.update(output)
             elapsed_time += self.dt
